@@ -1,0 +1,13 @@
+FROM ubuntu:22.04
+
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y openssh-server python3 python3-apt && \
+  mkdir /var/run/sshd
+
+# Create ansible user and allow SSH login
+RUN useradd -ms /bin/bash ansible && \
+  echo "ansible:ansible" | chpasswd && \
+  sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+ 
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]

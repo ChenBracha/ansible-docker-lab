@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  controller:
+    build:
+      context: .
+      dockerfile: Dockerfile.controller
+    container_name: ansible-controller
+    volumes:
+      - ./hosts.ini:/home/ansible/hosts.ini:ro
+      - ./ansible.cfg:/home/ansible/ansible.cfg:ro
+      - ./playbook.yml:/home/ansible/playbook.yml:ro
+      - ./id_rsa:/home/ansible/.ssh/id_rsa:ro
+    working_dir: /home/ansible
+    stdin_open: true
+    tty: true
+    command: ["sleep","infinity"]
+    networks:
+      - ansible-net
+
+  web01:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: web01
+    networks:
+      - ansible-net
+
+  web02:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: web02
+    networks:
+      - ansible-net
+
+  db01:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: db01
+    networks:
+      - ansible-net
+
+  db02:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    container_name: db02
+    networks:
+      - ansible-net
+
+networks:
+  ansible-net:
+    driver: bridge
